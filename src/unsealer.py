@@ -6,19 +6,12 @@ import json
 import requests
 import dns.resolver
 import getpass
-from pyzabbix import ZabbixMetric
-from pyzabbix import ZabbixSender
 from pydantic import BaseSettings
 from urllib3.exceptions import InsecureRequestWarning
 
 class Settings(BaseSettings):
     VAULT_HEADLESS_SVC: str
     KEYS_QUORUM: int
-    ZABBIX_ADDR: str
-    ZABBIX_PORT: int
-    ZABBIX_ITEM: str
-
-
 
 def sigint_handler(sig, frame):
     print('You pressed Ctrl+C!')
@@ -58,8 +51,6 @@ def get_keys():
     
 def unseal_loop(keys):
     while (True):
-        metrics = []
-        metrics.append(alive_metric)
         sealed=True
         try:
             nodes=dns.resolver.query(vault_headless_svc, 'A')
@@ -126,11 +117,9 @@ def unseal_loop(keys):
                     else:
                         print ("Unsealed vault{} sucsessfully".format(i))
                         ready(True)
-                        zbx.send(metrics)
             else:
                 print("Vault node {} is not sealed".format(i))
                 ready(True)
-                zbx.send(metrics)
 
         time.sleep(30)
         print ("")
@@ -142,9 +131,6 @@ if (__name__ == '__main__'):
 
     signal.signal(signal.SIGINT, sigint_handler)
     requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
-
-    alive_metric = ZabbixMetric(Settings().ZABBIX_ITEM, 'unsealer_is_alive', 1)
-    zbx = ZabbixSender(zabbix_server=Settings().ZABBIX_ADDR, zabbix_port=Settings().ZABBIX_PORT, use_config=None, chunk_size=250)
 
     keys_quorum = Settings().KEYS_QUORUM
     vault_headless_svc=Settings().VAULT_HEADLESS_SVC
