@@ -20,13 +20,13 @@ spec:
         sub: unsealer
     spec:
       imagePullSecrets:
-      - name: regcred
+      - name: $MY_REGISTRY_SECRET
       volumes:
       - name: tmp
         emptyDir: {}
       containers:
         - name: vault-unsealer-stage
-          image: papko26/vault-unsealer:k8s-vault-unsealer
+          image: $MY_REGISTRY/vault-unsealer
           stdin: true
           tty: true
           env:
