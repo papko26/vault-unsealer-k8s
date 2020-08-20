@@ -109,7 +109,8 @@ def unseal_loop(keys):
                 if data and type(data) == dict:
                     sealed = bool(data.get("sealed"))
                     if sealed:
-                        print ("Keys are sent, but vault {} is still unsealed:".format(i))
+                        print ("Keys are sent, but vault {} is still sealed:".format(i))
+                        print ("Probably kyes you entered are incorrect")
                         print ("Dying")
                         print (udata)
                         ready(False)
