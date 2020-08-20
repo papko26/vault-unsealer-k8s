@@ -1,0 +1,4 @@
+requests
+dnspython
+pydantic
+py-zabbix

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault-unsealer-stage
+  namespace: vault
+  labels:
+    app: vault
+    sub: unsealer
+    affinitygroup: vault-unsealer-stage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault
+      sub: unsealer
+  template:
+    metadata:
+      labels:
+        app: vault
+        sub: unsealer
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      containers:
+        - name: vault-unsealer-stage
+          image: papko26/vault-unsealer:k8s-vault-unsealer
+          stdin: true
+          tty: true
+          env:
+            - name: VAULT_HEADLESS_SVC
+              value: "stage-vault-internal"
+            - name: KEYS_QUORUM
+              value: "3"
+          resources:
+            requests:
+              cpu: "0.05"
+              memory: "64Mi"
+            limits:
+              cpu: "0.2"
+              memory: "128Mi"
+          readinessProbe:
+            exec:
+              command:
+              - cat
+              - /tmp/inloop
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp/
+          securityContext:
+            runAsUser: 999
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
