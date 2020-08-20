@@ -13,7 +13,8 @@
 ```
 
 vault-unsealer-k8s/src/ # docker build -t vault-unsealer .
-vault-unsealer-k8s/src/ # docker push <ВАШ_REGISTRY>/vault-unsealer
+vault-unsealer-k8s/src/ # docker push <MY_REGISTRY>/vault-unsealer
+vault-unsealer-k8s/manifests/ # поменяй  MY_REGISTRY и MY_REGISTRY_SECRET на свои данные
 vault-unsealer-k8s/manifests/ # kubectl apply -f unsealer.yaml
 ```
 
