@@ -27,7 +27,7 @@ String, headless адрес (тот который просто отдаёт DNS
 ```
 KEYS_QUORUM
 int, количество shamir ключей, которых достаточно для распаковки
-Например VAULT_HEADLESS_SVC=3
+Например KEYS_QUORUM=3
 ```
 ```
 ZABBIX_PORT
